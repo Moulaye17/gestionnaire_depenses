@@ -10,6 +10,7 @@ import java.util.List;
 
 public class StockageCsv implements Stockage {
     private Path fichier;
+    private Path fichierBudget = Paths.get("budget.txt");
 
     public StockageCsv(String chemin) {
         this.fichier = Paths.get(chemin);
@@ -60,5 +61,26 @@ public class StockageCsv implements Stockage {
             }
         }
         return resultat;
+    }
+
+    @Override
+    public void sauvegarderBudget(double budget) throws IOException {
+        Files.write(fichierBudget, List.of(String.valueOf(budget)), StandardCharsets.UTF_8);
+    }
+
+    @Override
+    public double chargerBudget() throws IOException {
+        if (!Files.exists(fichierBudget)) {
+            return 0;
+        }
+        List<String> lignes = Files.readAllLines(fichierBudget, StandardCharsets.UTF_8);
+        if (lignes.isEmpty()) {
+            return 0;
+        }
+        try {
+            return Double.parseDouble(lignes.get(0).trim());
+        } catch (NumberFormatException e) {
+            return 0; // fichier illisible : on considère qu'il n'y a pas de budget
+        }
     }
 }
