@@ -1,26 +1,28 @@
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class App {
     public static void main(String[] args) {
         Stockage stockage = new StockageCsv("depenses.csv");
-
-        List<Transaction> liste = new ArrayList<>();
-        liste.add(new Depense(1, 2500, LocalDate.now(),
-                              Categorie.ALIMENTATION, "Courses au marché"));
-        liste.add(new Revenu(2, 10000, LocalDate.now(),
-                             "Bourse", "Bourse du mois"));
+        GestionnaireDepenses gestionnaire = new GestionnaireDepenses(stockage);
 
         try {
-            stockage.sauvegarder(liste);
-            System.out.println("Sauvegarde faite.");
+            gestionnaire.charger();
 
-            List<Transaction> rechargees = stockage.charger();
-            for (Transaction t : rechargees) {
+            gestionnaire.ajouterDepense(1000, LocalDate.now(),
+                    Categorie.TRANSPORT, "Ticket de bus");
+
+            System.out.println("--- Toutes les opérations ---");
+            for (Transaction t : gestionnaire.lister()) {
                 System.out.println(t);
             }
+
+            System.out.println("Total dépenses : " + gestionnaire.totalDepenses() + " FCFA");
+            System.out.println("Total revenus : " + gestionnaire.totalRevenus() + " FCFA");
+            System.out.println("Solde : " + gestionnaire.solde() + " FCFA");
+            System.out.println("Par catégorie : " + gestionnaire.totalParCategorie());
+
+            gestionnaire.sauvegarder();
         } catch (IOException e) {
             System.out.println("Erreur : " + e.getMessage());
         }
