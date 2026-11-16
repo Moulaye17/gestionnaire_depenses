@@ -1,0 +1,3 @@
+public enum Categorie {
+    ALIMENTATION, TRANSPORT, LOISIRS, LOGEMENT, SANTE, AUTRE
+}
